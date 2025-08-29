@@ -1,0 +1,157 @@
+@tailwind base; @tailwind components; @tailwind utilities;
+
+/* ==================== THEME TOKENS ==================== */
+:root { --bg:#0b0f15; --text:#e6f0ff; --muted:#a5b8d8; --accent:#00d0ff; --panel:#0f1621; --panel2:#0a111b; --border:rgba(54,209,255,.2) }
+body[data-theme="aqua-dark"] {
+--bg:#0b0f15; --text:#e6f0ff; --muted:#a5b8d8; --accent:#39c3ff;
+--panel:#0f1621; --panel2:#0a111b; --gel1:rgba(255,255,255,.12); --gel2:rgba(255,255,255,.02);
+--stripe:linear-gradient(0deg, rgba(255,255,255,.06) 0, rgba(255,255,255,.06) 2px, transparent 2px, transparent 6px);
+--shadow:rgba(0,0,0,.55); --border:rgba(54,209,255,.18)
+}
+/* This selector is `:root` in the prompt, but the original file uses `body`. We will use `body` for consistency. */
+body[data-theme="aqua-light"] {
+--bg: #e9f1fa;
+--panel: rgba(255,255,255,0.82);
+--panel2: rgba(255,255,255,0.70);
+--text: #0e1a2b;
+--muted: #4b5b75;
+--border: rgba(15, 25, 45, 0.18);
+--shadow: rgba(9, 19, 33, 0.28);
+--accent: #2f9bff;
+--accent-2: #ff5ea3;
+ /* Kept from original light theme for compatibility */
+--gel1:rgba(255,255,255,.8); 
+--gel2:rgba(255,255,255,.5);
+--stripe:linear-gradient(0deg, rgba(0,0,0,.04) 0, rgba(0,0,0,.04) 2px, transparent 2px, transparent 6px);
+}
+
+/* CRT + wallpaper helpers */
+html,body,#root{height:100%}
+body{ background: radial-gradient(1200px 600px at 15% 10%, rgba(0,224,255,.12), transparent 60%), var(--bg); color:var(--text); font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, 'Press Start 2P', sans-serif }
+.crt::before{content:"";position:fixed;inset:0;pointer-events:none;background-image:var(--stripe);mix-blend-mode:overlay;opacity:.15}
+.desktop{position:relative;height:100%;width:100%}
+/* Reserve space for a right-side dock */
+.right-dock-gap{position:absolute; inset:24px 104px 0 0; padding:8px}
+/* System menu pop */
+.menu-pop{position:fixed; z-index:99999}
+
+/* ==================== MENUBAR ==================== */
+.menubar{position:fixed; top:0; left:0; right:0; height:24px; display:flex; align-items:center; gap:12px; padding:0 10px; background:linear-gradient(180deg,var(--gel1),var(--gel2)); border-bottom:1px solid var(--border); backdrop-filter:saturate(1.2) blur(3px); z-index:10000}
+.menubar-logo{font-weight:900; cursor:default}
+.menubar-item{position:relative; padding:2px 6px; border-radius:6px; cursor:default}
+.menubar-item:hover{background:rgba(0,0,0,.08)}
+.menu{min-width:220px; background:var(--panel2); border:1px solid var(--border); box-shadow:0 12px 28px var(--shadow); border-radius:10px; padding:6px}
+.menu-item{display:block; width:100%; text-align:left; padding:6px 10px; border-radius:8px}
+.menu-item:hover{background:rgba(255,255,255,.08)}
+.menu-sep{height:1px; background:var(--border); margin:4px 2px}
+
+/* ==================== DOCK ==================== */
+/* Dock: right vertical */
+.dock{
+position:fixed; top:50%; right:16px; transform:translateY(-50%);
+width:84px; display:flex; align-items:center; justify-content:center; pointer-events:none; z-index:9999;
+}
+.dock-inner{
+pointer-events:auto;
+background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.08));
+border:1px solid var(--border); border-radius:22px; padding:10px 10px;
+backdrop-filter:blur(6px) saturate(1.2); box-shadow:0 16px 32px var(--shadow);
+}
+.dock-item{
+position:relative; width:56px; height:56px; border-radius:14px; margin:8px 0;
+display:flex; align-items:center; justify-content:center;
+transform-origin:center; transition:transform .12s;
+}
+.dock-item:hover{ transform:scale(1.1) }
+.dock-emoji{ font-size:28px }
+.dock-dot{ position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:6px; height:6px; background:#2cf; border-radius:999px }
+
+/* ==================== WINDOWS ==================== */
+.window{position:absolute; background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--border); border-radius:14px; box-shadow:0 18px 38px var(--shadow); overflow:hidden; transition:left .2s ease-out, top .2s ease-out, width .2s ease-out, height .2s ease-out}
+.titlebar{display:flex; align-items:center; justify-content:space-between; gap:8px; height:28px; padding:0 8px; background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.02)); border-bottom:1px solid var(--border)}
+.win-controls{display:flex; align-items:center; gap:6px}
+.wc{width:18px; height:18px; border-radius:4px; font-size:12px; line-height:16px;
+display:flex; align-items:center; justify-content:center; border:1px solid var(--border);
+background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02)); color:var(--text); opacity:.9}
+.wc:hover{opacity:1; transform:translateY(-1px)}
+.wc-close{color:#ffd7d7}
+.wc-min{color:#e6f0ff}
+.wc-max{color:#d4ffd7}
+.traffic{display:flex; gap:8px}
+.tl{width:12px;height:12px;border-radius:999px;border:1px solid rgba(0,0,0,.25)}
+.tl.close{background:#ff5f57}
+.tl.min{background:#febc2e}
+.tl.zoom{background:#28c840}
+.title{font-weight:700; opacity:.9}
+.win-body{position:relative; height:calc(100% - 28px)}
+.resize{position:absolute; right:0; bottom:0; width:16px; height:16px; cursor:se-resize}
+
+/* ==================== MODALS ==================== */
+.osmodal-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.35); display:flex; align-items:center; justify-content:center; z-index:100000}
+.osmodal{min-width:320px; max-width:520px; background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--border); border-radius:14px; box-shadow:0 18px 38px var(--shadow); padding:10px}
+.dialog-title{font-weight:700; margin-bottom:6px}
+.dialog-body{margin-bottom:10px}
+.dialog-input{width:100%; padding:6px 8px; background:rgba(255,255,255,.05); border:1px solid var(--border); border-radius:8px}
+.dialog-actions{display:flex; justify-content:flex-end; gap:8px}
+.btn{
+background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.7));
+border: 1px solid var(--border);
+color: var(--text);
+border-radius: 10px;
+padding: .45rem .8rem;
+box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.btn.primary{
+background: linear-gradient(180deg, var(--accent), #1a74d0);
+color: white; border-color: rgba(0,0,0,.15);
+}
+
+/* ==================== PANELS / TERMINAL / TABLE ==================== */
+.panel{border:1px solid var(--border); border-radius:12px; padding:10px; background:linear-gradient(180deg,var(--panel),var(--panel2))}
+.panel-title{font-weight:700; margin-bottom:6px}
+.terminal{display:flex; flex-direction:column; height:100%}
+.term-scroll{flex:1; overflow:auto; padding:8px; background:rgba(0,0,0,.12); border-top:1px solid var(--border)}
+.term-line{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space:pre-wrap}
+.term-input{display:flex; gap:6px; padding:8px; border-top:1px solid var(--border)}
+.term-input input{flex:1; background:rgba(0,0,0,.12); border:1px solid var(--border); border-radius:8px; padding:4px 6px}
+
+/* Tables inside Explorer keep your original Tailwind classes */
+
+/* ==================== POWER ==================== */
+.power{position:fixed; inset:0; z-index:100000; display:flex; align-items:center; justify-content:center}
+.power.sleep{ backdrop-filter:brightness(0.2) blur(1px); background:rgba(0,0,0,.55) }
+.power.off{ background:radial-gradient(800px 600px at 50% 40%, rgba(0,0,0,.85), #000) }
+.power-note{ color:#cde; opacity:.85; font-weight:600 }
+.power-btn{
+font-size:18px; padding:.6rem 1rem; border-radius:999px;
+background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
+border:1px solid var(--border); color:var(--text)
+}
+
+/* ==================== CARD ==================== */
+.card-ui{
+width:72px; height:96px; background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
+border:1px solid var(--border); border-radius:10px; position:relative; display:flex; align-items:center; justify-content:center;
+}
+.c-corner{position:absolute; font-weight:700; font-size:12px; display:flex; flex-direction:column; align-items:center}
+.c-corner span{font-size:12px; line-height:12px}
+.c-corner.tl{top:6px; left:6px}
+.c-corner.br{bottom:6px; right:6px; transform:rotate(180deg)}
+.c-suit{font-size:28px; opacity:.9}
+
+.game-wrap{position:relative; height:100%}
+.game-overlay{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.35); z-index:10}
+.game-panel{
+background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.88));
+border: 1px solid var(--border);
+color: var(--text);
+  /* Layout properties from original rule preserved */
+border-radius:12px; padding:16px; min-width:260px; text-align:center;
+}
+.game-title{font-weight:800; font-size:18px}
+.game-sub{opacity:.8; margin-bottom:.5rem}
+
+.cb-table{flex:1; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.08); border:1px solid var(--border); border-radius:12px; padding:8px}
+.pile{display:flex; gap:8px}
+.hand{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px}
+.card{ background:none; border:none }

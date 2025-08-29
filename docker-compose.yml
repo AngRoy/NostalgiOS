@@ -1,0 +1,15 @@
+
+version: "3.9"
+services:
+  server:
+    build: ./server/snap
+    ports: [ "8080:8080" ]
+    volumes: [ "snaps:/app/data" ]
+  web:
+    image: node:20
+    working_dir: /app
+    volumes: [ "./apps/web-os:/app" ]
+    command: bash -lc "npm i && npm run dev -- --host 0.0.0.0"
+    ports: [ "5173:5173" ]
+volumes:
+  snaps:

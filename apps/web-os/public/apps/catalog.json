@@ -1,0 +1,14 @@
+{
+  "apps": [
+    {
+      "id": "hello",
+      "name": "Hello Sandbox",
+      "entry": "/apps/hello/index.html",
+      "permissions": [
+        "fs",
+        "notify"
+      ],
+      "icon": "/icons/icon-192.png"
+    }
+  ]
+}

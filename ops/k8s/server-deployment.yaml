@@ -1,0 +1,19 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: nostalgi-server }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: nostalgi-server } }
+  template:
+    metadata: { labels: { app: nostalgi-server } }
+    spec:
+      containers:
+        - name: server
+          image: your-registry/nostalgi-server:latest
+          ports: [ { containerPort: 8080 } ]
+          env:
+            - name: SNAP_JWT_SECRET
+              valueFrom: { secretKeyRef: { name: nostalgi-secrets, key: jwtSecret } }
+          volumeMounts: [ { name: data, mountPath: /app/data } ]
+      volumes: [ { name: data, emptyDir: {} } ]

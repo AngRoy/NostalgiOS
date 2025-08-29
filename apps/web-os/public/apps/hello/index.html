@@ -1,0 +1,9 @@
+
+<!doctype html>
+<html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Hello Sandbox</title><script src="/sdk/app-sdk.js"></script>
+<style>body{font-family:system-ui;margin:0;padding:16px;background:#0b0f15;color:#e6f0ff}textarea{width:100%;height:200px}.panel{background:#0f1621;border:1px solid #36d1ff;padding:12px;border-radius:8px}</style></head>
+<body><div class="panel"><h3>Hello from Sandbox App</h3><p>This app talks to the OS via the capability bridge.</p>
+<div><button id="write">Write /Sandbox/hello.txt</button> <button id="read">Read</button></div>
+<textarea id="out" placeholder="Click Read" spellcheck="false"></textarea></div>
+<script>const out=document.getElementById('out');document.getElementById('write').onclick=async()=>{await OS.request('fs','mkdir','/Sandbox').catch(()=>{});await OS.request('fs','writeText','/Sandbox/hello.txt','Hello from sandbox app!');out.value='Written!'};document.getElementById('read').onclick=async()=>{try{out.value=await OS.request('fs','readText','/Sandbox/hello.txt')}catch(e){out.value='Read failed: '+e.message}}</script></body></html>
