@@ -41,8 +41,18 @@ export const store = new Store();
 
 // Track readiness without using a top-level await
 let _ready: Promise<void> | null = null;
+let _isReady = false; // New flag to track readiness synchronously
 
 export function initStore(): Promise<void> {
-  if (!_ready) _ready = store.init();  // your existing async init logic
+  if (!_ready) {
+    _ready = store.init().then(() => {
+      _isReady = true; // Set flag to true once the promise resolves
+    });
+  }
   return _ready;
+}
+
+// New exported helper function
+export function isStoreReady() {
+  return _isReady;
 }
