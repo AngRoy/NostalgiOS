@@ -2,7 +2,7 @@ name: Deploy frontend to GitHub Pages
 
 on:
   push:
-    branches: [ main ]  # or your default branch
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -10,36 +10,41 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Node
-      - uses: actions/setup-node@v4
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: apps/web-os/package-lock.json
 
       - name: Install deps
-        run: |
-          cd apps/web-os
-          npm ci
+        working-directory: apps/web-os
+        run: npm ci
 
-      - name: Build with base path for project pages
+      - name: Build (base path for project pages)
+        working-directory: apps/web-os
         env:
-          # IMPORTANT: base path becomes /<repo>/
+          # IMPORTANT: For Project Pages, base must be "/<repo>/"
           VITE_BASE_PATH: "/${{ github.event.repository.name }}/"
           VITE_SERVER_ENABLED: "false"
-        run: |
-          cd apps/web-os
-          npm run build
+        run: npm run build
 
-      - name: SPA fallback (404.html)
-        run: |
-          cp apps/web-os/dist/index.html apps/web-os/dist/404.html
+      - name: SPA 404 fallback
+        run: cp apps/web-os/dist/index.html apps/web-os/dist/404.html
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -50,8 +55,9 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     needs: build
+    runs-on: ubuntu-latest
     steps:
-      - id: deployment
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
