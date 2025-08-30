@@ -57,5 +57,5 @@ root.render(<Splash />);
       </ErrorBoundary>
     );
     console.log('[nostalgiOS] UI mounted');
-  }, 5000);
+  }, 2000);
 })();
