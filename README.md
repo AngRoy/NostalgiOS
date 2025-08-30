@@ -1,16 +1,12 @@
-# nostalgiOS — A Web-Native, Retro-Modern “OS” in the Browser
+# NostalgiOS — A Web-Native, Retro-Modern OS in the Browser
 
-nostalgiOS is a lightweight, browser-based operating environment that blends early-Mac/90s desktop nostalgia with a polished modern UX. It ships with windowed apps (Explorer, Settings, Help), a right-side Dock and menubar, a terminal, an in-OS browser (sandboxed), and a suite of classic game clones—plus a Spring Boot backend that can persist snapshots locally or to S3. Everything runs on the open web stack (React + Vite + TypeScript + Web APIs), with optional WASM (Pyodide, Bash).
-
-> **Why this project?**
-> To explore how far we can push a “desktop-like OS” inside a single web origin—fast boot, rich UX, offline capability, and state that “just comes back” when you reopen the tab—without accounts or friction.
+This is a web based operating system architected with a React/Vite/TypeScript frontend and a Spring Boot 3 backend. The application simulates a desktop environment in the browser, providing a window manager, Dock, terminal, and games, with an available REST API for creating S3-backed system snapshots.
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-* **Original, retro-inspired desktop UI**
-  Right-aligned window controls (−, ☐, ×), no trade-dress of other OSes. Light (default), Aqua-Dark, and High-Contrast themes. Smooth animations, dock bounce, window snapping.
+* **Retro-inspired desktop UI**
 
 * **State that survives reloads**
   IndexedDB + localStorage snapshotting; optional server snapshots on disk or S3. Reopen and continue where you left off.
@@ -26,9 +22,6 @@ nostalgiOS is a lightweight, browser-based operating environment that blends ear
 
 * **Backend APIs (Spring Boot 3 + Java 21)**
   Health endpoints; snapshot store/fetch/delete to **local disk** or **AWS S3** (v2 SDK). H2 for local dev; secure defaults for production.
-
-* **Single-container production**
-  Build the SPA with Vite, bake into the Spring Boot jar, run one image. Or use docker-compose for split dev (Vite @5173, API @8080).
 
 ---
 
@@ -46,11 +39,6 @@ nostalgiOS is a lightweight, browser-based operating environment that blends ear
 * [Theming & Accessibility](#theming--accessibility)
 * [Testing & Quality](#testing--quality)
 * [Deployment Options](#deployment-options)
-* [Troubleshooting](#troubleshooting)
-* [Roadmap](#roadmap)
-* [Security & Legal](#security--legal)
-* [Credits](#credits)
-* [License](#license)
 
 ---
 
@@ -310,45 +298,3 @@ Already covered in “Quick Start”. Push to any registry and run.
 
 * One Deployment + Service; mount a PVC at `/app/data`.
 * Optional: HPA on CPU/RAM; externalized S3 credentials via Secret.
-
----
-
-## Troubleshooting
-
-**Blank screen (only background)**
-
-* Use our Error Boundary; click **Reset & Reload** (clears IndexedDB/localStorage for this origin).
-* Causes we already hardened:
-
-  * Missing wallpaper record → now handled safely.
-  * Old profile missing defaults → migrations in `boot.ts`.
-
-**`file is not defined` in `MenuBar.tsx`**
-
-* Ensure `File` menu array exists and `groups` references it. (Fixed in current code.)
-
-**Vite error: “Cannot import non-asset file inside /public”**
-
-* You can’t `import` files from `public/`. Load at runtime via URL (`importScripts` in workers, `<script src>` otherwise).
-
-**Build error: top-level await not available**
-
-* Don’t use `await` at module scope. We export `initStore()` and await it in `main.tsx`.
-* `vite.config.ts` sets `build.target: 'esnext'`.
-
-**Runtime `AccessDeniedException: /app/./data/snapshots`**
-
-* You’re running as a non-root user with a volume owned by root. Our `docker/entrypoint.sh` chowns `/app/data` before starting, then `gosu` drops to `appuser`.
-* Alternative: recreate the named volume after setting correct ownership in the image.
-
-**Spring startup: duplicate `/api/health`**
-
-* Don’t map the same route twice. Keep `HealthController#health()` and map the extra method as `/api/ping`.
-
----
-
-## Credits
-
-* Built with: React, Vite, TypeScript, Spring Boot 3, Java 21, AWS SDK v2, H2, and WASM (Pyodide/Bash).
-* Pixel art & SFX: original or public-domain (attribution in `public/assets` where applicable).
-
