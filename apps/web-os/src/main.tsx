@@ -46,13 +46,16 @@ root.render(<Splash />);
     console.error('Initialization failed; continuing with a fresh state.', e);
   }
 
-  // 3. Replace the splash screen with the fully-loaded application
-  root.render(
-    <ErrorBoundary>
-      <ModalProvider>
-        <Desktop />
-      </ModalProvider>
-    </ErrorBoundary>
-  );
-  console.log('[nostalgiOS] UI mounted');
+  // Wait for 5 seconds before showing the main UI
+  setTimeout(() => {
+    // 3. Replace the splash screen with the fully-loaded application
+    root.render(
+      <ErrorBoundary>
+        <ModalProvider>
+          <Desktop />
+        </ModalProvider>
+      </ErrorBoundary>
+    );
+    console.log('[nostalgiOS] UI mounted');
+  }, 5000);
 })();
