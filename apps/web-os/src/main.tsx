@@ -46,7 +46,7 @@ root.render(<Splash />);
     console.error('Initialization failed; continuing with a fresh state.', e);
   }
 
-  // Wait for 5 seconds before showing the main UI
+  // Wait for 0.5 seconds before showing the main UI
   setTimeout(() => {
     // 3. Replace the splash screen with the fully-loaded application
     root.render(
@@ -57,5 +57,5 @@ root.render(<Splash />);
       </ErrorBoundary>
     );
     console.log('[nostalgiOS] UI mounted');
-  }, 2000);
+  }, 500);
 })();
